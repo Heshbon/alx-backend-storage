@@ -88,7 +88,7 @@ To excel in this project, I need to be familiar with the following concepts:
 
 # 12. Average weighted score
 
-  + <u>[100-average_weighted_score.sql](https://github.com/Heshbon/alx-backend-storage/blob/master/100-average_weighted_score.sql)</u>: SQL script that creates a stored procedure ComputeAverageWeightedScoreForUser that computes and store the average weighted score for a student.
+  + <u>[100-average_weighted_score.sql](https://github.com/Heshbon/alx-backend-storage/blob/master/0x00-MySQL_Advanced/100-average_weighted_score.sql)</u>: SQL script that creates a stored procedure ComputeAverageWeightedScoreForUser that computes and store the average weighted score for a student.
 
 # 13. Average weighted score for all!
 
