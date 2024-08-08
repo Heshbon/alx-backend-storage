@@ -80,7 +80,7 @@ To excel in this project, I need to be familiar with the following concepts:
 
 # 10. Safe divide
 
-  + <u>[10-div.sql(https://github.com/Heshbon/alx-backend-storage/blob/master/0x00-MySQL_Advanced/10-div.sql)</u>: SQL script that creates a function SafeDiv that divides (and returns) the first by the second number or returns 0 if the second number is equal to 0.
+  + <u>[10-div.sql](https://github.com/Heshbon/alx-backend-storage/blob/master/0x00-MySQL_Advanced/10-div.sql)</u>: SQL script that creates a function SafeDiv that divides (and returns) the first by the second number or returns 0 if the second number is equal to 0.
 
 # 11. No table for a meeting
 
