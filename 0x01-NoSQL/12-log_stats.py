@@ -3,19 +3,24 @@ import os
 import logging
 from pymongo import MongoClient
 
-""" Python script that provides some stats
-about Nginx logs stored in MongoDB"""
+"""
+A script that provides some stats about
+Nginx logs stored in MongoDB.
+"""
 
-# Basic logging setup
+# Setup basic logging
 logging.basicConfig(level=logging.INFO)
 
 
 def log_stats():
-    """ Displays the total number of logs,
+    """
+    Connects to the MOngoDB database 'logs', queries the 'nginx' collection,
+    and prints statistics about the logs. It displays the total number of logs,
     counts of different HTTPmethods, and the number of logs with method GET
-    and path /status."""
+    and path /status.
+    """
     try:
-        # MongoDB connection
+        # MongoDB connection string from environment variable or default
         mongo_url = os.getenv('MONGO_URL', 'mongodb://localhost:27017/')
         client = MongoClient(mongo_url)
         db = client['logs']
@@ -25,7 +30,7 @@ def log_stats():
         total_logs = nginx_collection.count_documents({})
         logging.info(f"{total_logs} logs")
 
-        # Methods statistics
+        # Http methods statistics
         methods = ["GET", "POST", "PUT", "PATCH", "DELETE"]
         logging.info("Methods:")
 
@@ -33,7 +38,7 @@ def log_stats():
             count = nginx_collection.count_documents({"method": method})
             logging.info(f"  method {method}: {count}")
 
-        # No of documents
+        # Number of documents with method=GET and path=/status
         status_checks = nginx_collection.count_documents(
                 {"method": "GET", "path": "/status"})
         logging.info(f"{status_checks} status check")
