@@ -6,23 +6,23 @@ This project focuses on NoSQL databases, specifically MongoDB, and involves both
 
 By the end of this project, you should be able to:
 
-	+ Explain what NoSQL means.
+  + Explain what NoSQL means.
 
-	+ Describe the difference between SQL and NoSQL.
+  + Describe the difference between SQL and NoSQL.
 
-	+ Understand ACID properties.
+  + Understand ACID properties.
 	
-	+ Explain document storage.
+  + Explain document storage.
 
-	+ Identify various NoSQL types.
+  + Identify various NoSQL types.
 
-	+ Discuss the benefits of a NoSQL database.
+  + Discuss the benefits of a NoSQL database.
 
-	+ Query information from a NoSQL database.
+  + Query information from a NoSQL database.
 
-	+ Insert, update, and delete information in a NoSQL database.
+  + Insert, update, and delete information in a NoSQL database.
 
-	+ Use MongoDB effectively.
+  + Use MongoDB effectively.
 
 # Tasks 📃.
 
