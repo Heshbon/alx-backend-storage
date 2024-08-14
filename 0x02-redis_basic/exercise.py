@@ -10,11 +10,13 @@ from typing import Union, Optional, Callable, Any
 
 
 def count_calls(method: Callable) -> Callable:
-    """ Count the number of calls to a function.
+    """
+    Decorator to count the number of calls to a function.
     """
     @functools.wraps(method)
     def wrapper(self, *args, **kwargs) -> Any:
-        """ The increment call count and execute the method
+        """
+        Increment call count and execute the method.
         """
         key = f"count:{method.__qualname__}"
         self._redis.incr(key)
@@ -23,27 +25,30 @@ def count_calls(method: Callable) -> Callable:
 
 
 class Cache:
-    """ Handles data in Redis with unique keys.
+    """
+    Handles data storage and retrieval in Redis using unique keys.
 
-    Arguments:
-        _redis (redis.Redis): The redis client instance.
+    Attributes:
+        _redis (redis.Redis): An instance of the Redis client.
     """
 
     def __init__(self, host='localhost', port=6379, db=0):
-        """ Initialize Redis client and clear the database
+        """
+        Initializes Redis client and clears any existing data.
         """
         self._redis = redis.Redis(host=host, port=port, db=db)
         self._redis.flushdb()
 
     @count_calls
     def store(self, data: Union[str, bytes, int, float]) -> str:
-        """ Store data in Redis with a unique key.
+        """
+        Stores data in Redis under a unique key and returns the key.
 
-        Arguments:
-            data: The data to store (str, bytes, int, or float).
+        Args:
+            data: Data to store. can be srt, bytes, int or float.
 
         Returns:
-            The unique key for the stored data.
+            The unique key as a string.
         """
         key = str(uuid.uuid4())
         self._redis.set(key, data)
