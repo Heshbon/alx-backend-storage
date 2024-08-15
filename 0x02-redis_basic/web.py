@@ -6,8 +6,8 @@ import redis
 import requests
 from functools import wraps
 
+# Initialize Redis client
 r = redis.Redis()
-
 
 def url_access_count(method):
     """Decorator to enhance get_page with caching."""
@@ -16,10 +16,10 @@ def url_access_count(method):
         """Cache results and count URL access."""
         # Increment the count
         key_count = "count:" + url
-        current_count = r.incr(key_count)
+        r.incr(key_count)
 
         # Check if the URL is cached
-        key = "cached:" + url
+        key = "cache:" + url
         cached_value = r.get(key)
         if cached_value:
             # If cached, return cached value
@@ -29,15 +29,14 @@ def url_access_count(method):
             html_content = method(url)
             r.set(key, html_content, ex=10)
             return html_content
-        return wrapper
-
+    return wrapper
 
 @url_access_count
 def get_page(url: str) -> str:
     """Fetch and return the HTML content"""
-    results = requests.get(url)
-    return results.text
-
+    response = requests.get(url)
+    return response.text
 
 if __name__ == "__main__":
-    get_page('http://slowwly.robertomurray.co.uk')
+    content = get_page('http://slowwly.robertomurray.co.uk')
+    print(content)
