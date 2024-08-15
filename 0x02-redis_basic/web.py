@@ -9,6 +9,7 @@ from functools import wraps
 # Initialize Redis client
 r = redis.Redis()
 
+
 def url_access_count(method):
     """Decorator to enhance get_page with caching."""
     @wraps(method)
@@ -31,11 +32,13 @@ def url_access_count(method):
             return html_content
     return wrapper
 
+
 @url_access_count
 def get_page(url: str) -> str:
     """Fetch and return the HTML content"""
     response = requests.get(url)
     return response.text
+
 
 if __name__ == "__main__":
     content = get_page('http://slowwly.robertomurray.co.uk')
