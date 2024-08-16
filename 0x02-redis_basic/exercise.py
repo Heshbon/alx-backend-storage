@@ -1,3 +1,8 @@
+#!/usr/bin/env python3
+""" Defines a Cache class for interacting with Redis, handling storage
+and retrieval of data."""
+
+
 import redis
 import uuid
 import functools
