@@ -1,33 +1,34 @@
 #!/usr/bin/env python3
 """ Script to fetch and cache web page content with Redis."""
 
-
 import redis
 import requests
 from functools import wraps
+from urllib.parse import quote
 
 # Initialize Redis client
-r = redis.Redis()
+r = redis.Redis(host='localhost', port=6379, db=0, decode_responses=True)
 
 
 def url_access_count(method):
-    """ Decorator to cache page content and count accesses"""
+    """ Decorator to cache page content and count accesses."""
     @wraps(method)
     def wrapper(url):
-        """ Cache result and track URL access count"""
-        key_count = f"count:{url}"
+        """ Cache result and track URL access count."""
+        encoded_url = quote(url)  # Encode URL to use as Redis key
+        key_count = f"count:{encoded_url}"
         r.incr(key_count)  # Increment the count each time a URL is accessed
 
-        key_cache = f"cached:{url}"
+        key_cache = f"cached:{encoded_url}"
         cached_value = r.get(key_cache)
         if cached_value:
             # If cached, return the cached value
-            return cached_value.decode("utf-8")
+            return cached_value
         else:
             # Fetch and cache the content if not cached
             try:
                 html_content = method(url)
-                r.set(key_cache, html_content, ex=10)  # Cache for 10 seconds
+                r.setex(key_cache, 10, html_content)  # Cache for 10 seconds
                 return html_content
             except requests.RequestException as e:
                 # Return error message if request fails
@@ -44,4 +45,6 @@ def get_page(url: str) -> str:
 
 
 if __name__ == "__main__":
-    print(get_page('http://slowwly.robertomurray.co.uk'))
+    # Test the function
+    url = 'http://slowwly.robertomurray.co.uk'
+    print(get_page(url))
