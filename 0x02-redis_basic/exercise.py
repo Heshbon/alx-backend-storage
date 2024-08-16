@@ -1,8 +1,3 @@
-#!/usr/bin/env python3
-""" Defines a Cache class for interacting with Redis, handling storage
-and retrieval of data.
-"""
-
 import redis
 import uuid
 import functools
@@ -10,23 +5,18 @@ from typing import Union, Optional, Callable, Any
 
 
 def count_calls(method: Callable) -> Callable:
-    """ Decorator to count method calls in Redis.
-    """
+    """ Decorator to count method calls in Redis. """
     @functools.wraps(method)
     def wrapper(self, *args, **kwargs) -> Any:
-        """ Increment call count and call the original method.
-        """
+        """ Increment call count and call the original method. """
         key = f"count:{method.__qualname__}"
-        # Increment the count for the method's key
         self._redis.incr(key)
-        # Call the original method and return its result
         return method(self, *args, **kwargs)
     return wrapper
 
 
 def call_history(method: Callable) -> Callable:
-    """ Decorator to log inputs and outputs of a function.
-    """
+    """ Decorator to log inputs and outputs of a function. """
     @functools.wraps(method)
     def wrapper(self, *args, **kwargs) -> Any:
         key = method.__qualname__
@@ -38,88 +28,54 @@ def call_history(method: Callable) -> Callable:
 
 
 class Cache:
-    """ Cache class to store and retrieve data in Redis.
-
-    Attributes:
-        _redis (redis.Redis): Redis client instance.
-    """
+    """ Cache class to store and retrieve data in Redis. """
 
     def __init__(self, host='localhost', port=6379, db=0):
-        """ Initialize Redis client and clear existing data.
-        """
+        """ Initialize Redis client and clear existing data. """
         self._redis = redis.Redis(host=host, port=port, db=db)
         self._redis.flushdb()
 
     @count_calls
     @call_history
     def store(self, data: Union[str, bytes, int, float]) -> str:
-        """ Store data in Redis with a unique key.
-
-        Args:
-            data: Data to store (str, bytes, int, float).
-
-        Returns:
-            Unique key for the stored data.
-        """
+        """ Store data in Redis with a unique key. """
         key = str(uuid.uuid4())
         self._redis.set(key, data)
         return key
 
-    def get(
-        self,
-        key: str,
-        fn: Optional[Callable] = None
-    ) -> Optional[Union[str, bytes, int, float]]:
-        """ Retrieve data from Redis and optionally convert it.
-
-        Args:
-            key: The key of the data to retrieve.
-            fn: Optional conversion function.
-
-        Returns:
-            The retrieved data or None if not found.
-        """
+    def get(self, key: str, fn: Optional[Callable[[bytes], Any]] = None
+            ) -> Optional[Union[str, bytes, int, float]]:
+        """ Retrieve data from Redis and optionally convert it. """
         data = self._redis.get(key)
         if data is None:
             return None
         if fn:
             return fn(data)
-        return data
+        return data.decode('utf-8')
 
-    def get_str(self, key: str) -> Optional[str]:
-        """ Retrieve a string from Redis.
-
-        Args:
-            key: The key of the data to retrieve.
-
-        Returns:
-            The retrieved string or None if not found.
-        """
-        return self.get(key, lambda x: x.decode('utf-8'))
-
-    def get_int(self, key: str) -> Optional[int]:
-        """ Retrieve an integer from Redis.
-
-        Args:
-            key: The key of the data to retrieve.
-
-        Returns:
-            The retrieved integer or None if not found.
-        """
+    def get_count(self, key: str) -> Optional[int]:
+        """ Retrieve an integer count from Redis. """
         value = self._redis.get(key)
         if value is None:
             return None
+        return int(value)
+
+    def get_str(self, key: str) -> Optional[str]:
+        """ Retrieve a string from Redis. """
+        return self.get(key, lambda x: x.decode('utf-8'))
+
+    def get_int(self, key: str) -> Optional[int]:
+        """ Retrieve an integer from Redis. """
+        value = self.get(key)
+        if value is None:
+            return None
         try:
-            return int(value.decode("utf-8"))
+            return int(value)
         except ValueError:
             return None
 
     def replay(self, method: Callable):
-        """ Display history of calls for a method.
-
-        Args:
-            method: Method to display call history for.
-        """
+        """ Display history of calls for a method. """
         method_name = method.__qualname__
         inputs_key = f"{method_name}:inputs"
         outputs_key = f"{method_name}:outputs"
