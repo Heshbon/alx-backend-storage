@@ -6,7 +6,7 @@ and retrieval of data.
 import redis
 import uuid
 import functools
-from typing import Union, Optional, Callable
+from typing import Union, Optional, Callable, Any
 
 
 def count_calls(method: Callable) -> Callable:
