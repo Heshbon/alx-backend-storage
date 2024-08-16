@@ -1,7 +1,7 @@
 #!/usr/bin/env python3
 """ Script to fetch and cache web page content with Redis."""
 
-
+import time
 import redis
 import requests
 from functools import wraps
