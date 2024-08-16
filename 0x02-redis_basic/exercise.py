@@ -17,7 +17,9 @@ def count_calls(method: Callable) -> Callable:
         """ Increment call count and call the original method.
         """
         key = f"count:{method.__qualname__}"
+        # Increment the count for the method's key
         self._redis.incr(key)
+        # Call the original method and return its result
         return method(self, *args, **kwargs)
     return wrapper
 
@@ -64,10 +66,19 @@ class Cache:
         return key
 
     def get(
-            self,
-            key: str,
-            fn: Optional[Callable] = None
-            ) -> Optional[Union[str, bytes, int, float]]:
+        self,
+        key: str,
+        fn: Optional[Callable] = None
+    ) -> Optional[Union[str, bytes, int, float]]:
+        """ Retrieve data from Redis and optionally convert it.
+
+        Args:
+            key: The key of the data to retrieve.
+            fn: Optional conversion function.
+
+        Returns:
+            The retrieved data or None if not found.
+        """
         data = self._redis.get(key)
         if data is None:
             return None
@@ -82,7 +93,7 @@ class Cache:
             key: The key of the data to retrieve.
 
         Returns:
-            The retrieved string or None if not found
+            The retrieved string or None if not found.
         """
         return self.get(key, lambda x: x.decode('utf-8'))
 
@@ -107,7 +118,7 @@ class Cache:
         """ Display history of calls for a method.
 
         Args:
-        Method: Method to display call history for.
+            method: Method to display call history for.
         """
         method_name = method.__qualname__
         inputs_key = f"{method_name}:inputs"
